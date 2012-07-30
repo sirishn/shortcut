@@ -7,6 +7,8 @@ require 'synapse'
 require 'spike_counter'
 require 'triggered_input'
 require 'clk_gen'
+require 'waveform'
+require 'spindle'
 
 def generate_verilog
   
@@ -20,8 +22,11 @@ def generate_verilog
     $spike_counters ||= []
     $triggered_inputs ||= []
     $clk_gens ||= []
+    $waveforms ||= []
+    $spindles ||= []
 
-    blocks = $triggered_inputs + $clk_gens + $neurons + $synapses + $spike_counters
+    blocks = $triggered_inputs + $clk_gens + $waveforms + $neurons + $synapses + \
+     $spike_counters + $spindles
     
     generate_opalkelly_header($modulename)
 

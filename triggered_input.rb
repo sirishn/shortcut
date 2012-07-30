@@ -28,21 +28,21 @@ class TriggeredInput
     def put_wire_definitions
         wires = %{
         // Triggered Input #{@id} Wire Definitions
-        reg [31:0] #{@id};        
+        reg [31:0] #{@id};    // Triggered input sent from USB (#{@name})       
         }
         puts wires    
     end
 
     def put_instance_definition
         instance = %{
-        // Triggered Input #{@id} Instance Definition
+        // Triggered Input #{@id} Instance Definition (#{@name})
         always @ (posedge ep#{@trigger_address[0]}trig[#{@trigger_address[1]}] or posedge reset_global)
         if (reset_global)
-            #{@id} <= #{@reset_value};
+            #{@id} <= #{@reset_value};        
         else
             #{@id} <= {ep02wire, ep01wire};        
         }
-	puts instance
+	      puts instance
     end
 
 end

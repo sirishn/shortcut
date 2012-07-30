@@ -23,9 +23,9 @@ class ClkGen
     def put_wire_definitions
         wires = %{
         // Clock Generator #{@id} Wire Definitions
-        wire neuron_clk;
-        wire sim_clk;
-        wire spindle_clk;
+        wire neuron_clk;  // neuron clock (128 cycles per 1ms simulation time) 
+        wire sim_clk;     // simulation clock (1 cycle per 1ms simulation time)
+        wire spindle_clk; // spindle clock (3 cycles per 1ms simulation time)
         }
         puts wires    
     end

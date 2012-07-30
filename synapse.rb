@@ -30,12 +30,12 @@ class Synapse
         instance = %{
         // Synapse #{@id} Instance Definition
         synapse #{@id}(
-            .clk(neuron_clk),   // neuron clock (128 cycles per 1ms simulation time)
-            .reset(reset_global),   // reset synaptic weights
-            .spike_in(each_spike_#{@presynaptic_id}),   // spike from presynaptic neuron
-            .postsynaptic_spike_in(each_spike_#{@postsynaptic_id}), //spike from postsynaptic neuron
-            .I_out(I_#{@id}),    // sample of synaptic current out
-            .each_I(each_I_#{@id}) // raw synaptic currents
+            .clk(neuron_clk),                           // neuron clock (128 cycles per 1ms simulation time)
+            .reset(reset_global),                       // reset synaptic weights
+            .spike_in(each_spike_#{@presynaptic_id}),             // spike from presynaptic neuron
+            .postsynaptic_spike_in(each_spike_#{@postsynaptic_id}),   //spike from postsynaptic neuron
+            .I_out(I_#{@id}),                           // sample of synaptic current out
+            .each_I(each_I_#{@id})                      // raw synaptic currents
         );
         }
         puts instance

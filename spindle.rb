@@ -17,7 +17,8 @@ class Spindle
         @lce_id = ["dummy_waveform", 999]
         @BDAMP_1_id = ["dummy_triggered_input", 999]
         @BDAMP_2_id = ["dummy_triggered_input", 999]
-        @BDAMP_chain_id = ["dummy_triggered_input", 999]    
+        @BDAMP_chain_id = ["dummy_triggered_input", 999]
+        $spindles += [self]    
     end
 
     def connect_from(source)
@@ -34,8 +35,8 @@ class Spindle
     def put_wire_definitions
         wires = %{
         // Spindle #{@id} Wire Definitions
-        wire [31:0] #{@id}_Ia;
-        wire [31:0] #{@id}_II;
+        wire [31:0] #{@id}_Ia;    // Ia afferent (pps)
+        wire [31:0] #{@id}_II;    // II afferent (pps)
         }       
         puts wires
     end
@@ -44,18 +45,18 @@ class Spindle
         instance = %{
         // Spindle #{@id} Instance Definition
         spindle #{@id} (
-            .gamma_dyn(#{@gamma_dynamic_id}),
-            .gamma_sta(#{@gamma_static_id}),
-            .lce(#{@lce_id}),
-            .clk(spindle_clk),
-            .reset(reset_global),
+            .gamma_dyn(#{@gamma_dynamic_id}),   // spindle dynamic gamma input (pps)
+            .gamma_sta(#{@gamma_static_id}),    // spindle static gamma input (pps)
+            .lce(#{@lce_id}),                   // length of contractile element (muscle length)
+            .clk(spindle_clk),                  // spindle clock (3 cycles per 1ms simulation time) 
+            .reset(reset_global),               // reset the spindle
             .out0(),
             .out1(),
-            .out2(#{@id}_II),
-            .out3(#{@id}_Ia),
-            .BDAMP_1(#{@BDAMP_1_id}),
-            .BDAMP_2(#{@BDAMP_2_id}),
-            .BDAMP_chain(#{@BDAMP_chain_id})
+            .out2(#{@id}_II),                   // II afferent (pps)
+            .out3(#{@id}_Ia),                   // Ia afferent (pps)
+            .BDAMP_1(#{@BDAMP_1_id}),           // Damping coefficient for bag1 fiber
+            .BDAMP_2(#{@BDAMP_2_id}),           // Damping coefficient for bag2 fiber
+            .BDAMP_chain(#{@BDAMP_chain_id})    // Damping coefficient for chain fiber
         );
         }
         puts instance
