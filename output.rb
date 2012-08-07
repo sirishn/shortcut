@@ -15,6 +15,7 @@ class Output
         @input_id = []
         @wire_out_address = 31
         @wire_out_index = -1
+        @wire_count = 0
         $outputs += [self]
     end
 
@@ -63,11 +64,12 @@ class Output
     end
     
     def put_instance_definition
+        count_wires
         instance = %{
         // Output and OpalKelly Interface Instance Definitions
         assign led = 0;
         assign reset_global = ep00wire[0];
-        
+        okWireOR # (.N(#{@wire_count})) wireOR (ok2, ok2x);
         okHost okHI(
             .hi_in(hi_in),  .hi_out(hi_out),    .hi_inout(hi_inout),    .hi_aa(hi_aa),
             .ti_clk(ti_clk),    .ok1(ok1),  .ok2(ok2)   );
