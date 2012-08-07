@@ -9,6 +9,7 @@ require 'triggered_input'
 require 'clk_gen'
 require 'waveform'
 require 'spindle'
+require 'output'
 
 def generate_verilog
   
@@ -24,9 +25,10 @@ def generate_verilog
     $clk_gens ||= []
     $waveforms ||= []
     $spindles ||= []
+    $outputs ||= []
 
     blocks = $triggered_inputs + $clk_gens + $waveforms + $neurons + $synapses + \
-     $spike_counters + $spindles
+     $spike_counters + $spindles + $outputs
     
     generate_opalkelly_header($modulename)
 
@@ -43,7 +45,8 @@ def generate_verilog
         block.put_instance_definition
     end
     puts "/////////////////////// END INSTANCE DEFINITIONS //////////////////////////"
-
+    
+    puts "endmodule"
 end
 
 

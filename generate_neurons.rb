@@ -18,6 +18,9 @@ def generate_network
     ia_afferent = Neuron.new
     ia_afferent.connect_from motoneurons
     
+    output = Output.new
+    motoneurons.connect_to output
+    ia_afferent.connect_to output
     
 end
 

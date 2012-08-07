@@ -17,7 +17,12 @@ class ClkGen
     end
 
     def connect_from(source)
-        @input_id = source.id    
+        if source.id[0] == "triggered_input"
+            @input_id = source.id
+        else
+            raise "cannot connect #{source} to #{self}"
+        end
+              
     end
 
     def put_wire_definitions

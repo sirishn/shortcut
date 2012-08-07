@@ -42,7 +42,7 @@ class TriggeredInput
         else
             #{@id} <= {ep02wire, ep01wire};        
         }
-	      puts instance
+	    puts instance
     end
 
 end

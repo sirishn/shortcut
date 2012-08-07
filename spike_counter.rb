@@ -16,8 +16,16 @@ class SpikeCounter
         $spike_counters += [self]   
     end
 
+    def connect_to(destination)
+        destination.connect_from self
+    end
+
     def connect_from(source)
-        @input_id = source.id    
+        if source.id[0] == "neuron"
+            @input_id = source.id
+        else
+            raise "cannt connect #{source} to #{self}"
+        end
     end
 
     def put_wire_definitions
