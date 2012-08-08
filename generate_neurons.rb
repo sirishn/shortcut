@@ -4,7 +4,7 @@
 # Sirish Nandyala
 # hi@siri.sh
 
-require 'shortcut'
+require './shortcut'
 
 def generate_network
 

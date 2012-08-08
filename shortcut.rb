@@ -2,34 +2,26 @@
 # Sirish Nandyala
 # hi@siri.sh
 
-require 'neuron'
-require 'synapse'
-require 'spike_counter'
-require 'triggered_input'
-require 'clk_gen'
-require 'waveform'
-require 'spindle'
-require 'output'
+$block_types = []
+Dir["./blocks/*.rb"].each do |file|
+    $block_types += [File.basename(file, File.extname(file))]
+    require file
+end
+
 
 def generate_verilog
   
-  clk_divider = TriggeredInput.new [50,7], -1, "clk_divider"
-  clk = ClkGen.new
-  clk_divider.connect_to clk
+    clk_divider = TriggeredInput.new [50,7], -1, "clk_divider"
+    clk = ClkGen.new
+    clk_divider.connect_to clk
     
+    blocks = []
     $modulename ||= "shortcut"
-    $neurons ||= []    
-    $synapses ||= []
-    $spike_counters ||= []
-    $triggered_inputs ||= []
-    $clk_gens ||= []
-    $waveforms ||= []
-    $spindles ||= []
-    $outputs ||= []
+    $block_types.each do |block_type|
+        eval("$#{block_type}s ||= []")
+        eval("blocks += $#{block_type}s")
+    end
 
-    blocks = $triggered_inputs + $clk_gens + $waveforms + $neurons + $synapses + \
-     $spike_counters + $spindles + $outputs
-    
     generate_opalkelly_header($modulename)
 
     puts "/////////////////////// BEGIN WIRE DEFINITIONS ////////////////////////////" 

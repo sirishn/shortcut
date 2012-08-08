@@ -4,7 +4,7 @@
 # Sirish Nandyala
 # hi@siri.sh
 
-require 'shortcut'
+require './shortcut'
 
 $modulename = 'spindle'
 
@@ -18,6 +18,5 @@ waveform.connect_to spindle
 output = Output.new
 waveform.connect_to output
 spindle.connect_to output
-
 
 generate_verilog
