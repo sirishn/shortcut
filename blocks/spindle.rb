@@ -18,6 +18,9 @@ class Spindle
         @BDAMP_1_id = ["dummy_triggered_input", 999]
         @BDAMP_2_id = ["dummy_triggered_input", 999]
         @BDAMP_chain_id = ["dummy_triggered_input", 999]
+        
+        connect_parameters
+        
         $spindles += [self]    
     end
 
@@ -26,13 +29,14 @@ class Spindle
     end
 
     def connect_from(source)
-        if source.id[0] == "triggered_input"
+        (block_type,index) = source.id
+        if ["triggered_input", "static_input"].include? block_type
             @gamma_dynamic_id = source.id if source.name == "gamma_dynamic"
             @gamma_static_id = source.id if source.name == "gamma_static"
             @BDAMP_1_id = source.id if source.name == "BDAMP_1"
             @BDAMP_2_id = source.id if source.name == "BDAMP_2"
             @BDAMP_chain_id = source.id if source.name == "BDAMP_chain"
-        elsif source.id[0] == "waveform"
+        elsif block_type == "waveform"
             @lce_id = source.id 
         else
             raise "cannot connect #{source} to #{self}"
@@ -40,12 +44,12 @@ class Spindle
     end
 
     def connect_parameters
-      @@gamma_dynamic ||= TriggeredInput.new [50,4], "32'h42A0_0000", "gamma_dynamic"
-      @@gamma_static ||= TriggeredInput.new [50,5], "32'h42A0_0000", "gamma_static"
+      @@gamma_dynamic ||= TriggeredInput.new 80, "gamma_dynamic", [50,4]
+      @@gamma_static ||= TriggeredInput.new 80, "gamma_static", [50,5]
 
-      @@bdamp_1 ||= TriggeredInput.new [50,15], "32'h3E71_4120", "BDAMP_1"
-      @@bdamp_2 ||= TriggeredInput.new [50,14], "32'h3D14_4674", "BDAMP_2"
-      @@bdamp_chain ||= TriggeredInput.new [50,13], "32'h3C58_44D0", "BDAMP_chain"
+      @@bdamp_1 ||= TriggeredInput.new 0.2356, "BDAMP_1", [50,15]           #"32'h3E71_4120"
+      @@bdamp_2 ||= TriggeredInput.new 0.0362, "BDAMP_2", [50,14]           #"32'h3D14_4674"
+      @@bdamp_chain ||= TriggeredInput.new 0.0132, "BDAMP_chain", [50,13]   #"32'h3C58_44D0"
       
       @@gamma_dynamic.connect_to self
       @@gamma_static.connect_to self

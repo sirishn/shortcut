@@ -17,7 +17,8 @@ class ClkGen
     end
 
     def connect_from(source)
-        if source.id[0] == "triggered_input"
+        (block_type, index) = source.id
+        if ["triggered_input", "static_input"].include? block_type
             @input_id = source.id
         else
             raise "cannot connect #{source} to #{self}"

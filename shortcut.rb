@@ -11,9 +11,9 @@ end
 
 def generate_verilog
   
-    clk_divider = TriggeredInput.new [50,7], -1, "clk_divider"
-    clk = ClkGen.new
-    clk_divider.connect_to clk
+    @clk_divider ||= TriggeredInput.new -1, "clk_divider", [50,7]
+    @clk ||= ClkGen.new
+    @clk_divider.connect_to @clk
     
     blocks = []
     $modulename ||= "shortcut"

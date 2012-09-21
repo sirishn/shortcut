@@ -8,7 +8,7 @@ require './shortcut'
 
 def generate_network
 
-    $modulename = 'synapse'
+    $modulename = 'emg'
 
     i_in = TriggeredInput.new 10, "I_in", [50,6]
     
@@ -20,9 +20,13 @@ def generate_network
     
     ia_afferent.connect_to motoneurons
     
+    emg = EMG.new
+    motoneurons.connect_to emg
+    
     output = Output.new
     motoneurons.connect_to output
     ia_afferent.connect_to output
+    emg.connect_to output
     
 end
 

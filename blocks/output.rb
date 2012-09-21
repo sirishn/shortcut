@@ -21,16 +21,12 @@ class Output
 
     def connect_from(source)
         (block_type,index) = source.id
-        if block_type == "neuron"
+        if ["neuron"].include? block_type
             @input_id += [source.input_id] if source.input_id[0] == "synapse" unless @input_id.include? source.input_id
             @input_id += [source.id] unless @input_id.include? source.id
             @input_id += [source.spike_counter.id] unless @input_id.include? source.spike_counter.id        
-        elsif block_type == "spindle"
-            @input_id += [source.id] unless @input_id.include? source.id
-        elsif block_type == "waveform"
-            @input_id += [source.id] unless @input_id.include? source.id
-        elsif block_type == "triggered_input"
-            @input_id += [source.id] unless @input_id.include? source.id
+        elsif ["spindle", "waveform", "triggered_input", "emg"].include? block_type
+           @input_id += [source.id] unless @input_id.include? source.id
         else
             raise "cannot connect #{source} to #{self}"
         end
@@ -42,9 +38,10 @@ class Output
            @wire_count += 4 if block_type == "neuron"
            @wire_count += 2 if block_type == "synapse"
            @wire_count += 2 if block_type == "spike_counter"
-           @wire_count += 2 if block_type == "waveform"
+           @wire_count += 3 if block_type == "waveform"
            @wire_count += 2 if block_type == "triggered_input"
-           @wire_count += 4 if block_type == "spindle"    
+           @wire_count += 4 if block_type == "spindle"
+           @wire_count += 2 if block_type == "emg"    
         end
     end
     
@@ -65,6 +62,7 @@ class Output
     
     def put_instance_definition
         count_wires
+        @wire_out_index = -1
         instance = %{
         // Output and OpalKelly Interface Instance Definitions
         assign led = 0;
@@ -92,10 +90,13 @@ class Output
                 instance += add_wire_outs "spike_count", input_id
             elsif block_type == "waveform"
                 instance += add_wire_outs "", input_id
+                instance += add_pipe_in
             elsif block_type == "spindle"
                 instance += add_wire_outs "Ia", input_id
                 instance += add_wire_outs "II", input_id
             elsif block_type == "triggered_input"
+                instance += add_wire_outs "", input_id
+            elsif block_type == "emg"
                 instance += add_wire_outs "", input_id
             end
         end
@@ -109,6 +110,13 @@ class Output
         return %{
         okWireOut wo#{(@wire_out_address+=1).to_s(16)} (    .ep_datain(#{datain}[15:0]),  .ok1(ok1),  .ok2(ok2x[#{@wire_out_index+=1}*17 +: 17]), .ep_addr(8'h#{@wire_out_address.to_s(16)})    );
         okWireOut wo#{(@wire_out_address+=1).to_s(16)} (    .ep_datain(#{datain}[31:16]),  .ok1(ok1),  .ok2(ok2x[#{@wire_out_index+=1}*17 +: 17]), .ep_addr(8'h#{@wire_out_address.to_s(16)})   );    
+        }
+    end
+    
+    def add_pipe_in
+        return %{
+        okBTPipeIn ep80 (   .ok1(ok1) .ok2(ok2x[#{@wire_out_index+=1}*17 +: 17]), .ep_addr(8'h80), .ep_write(pipe_in_write),
+                            .ep_blockstrobe(), ep_dataout(pipe_in_data), ep_ready(1'b1));
         }
     end
     

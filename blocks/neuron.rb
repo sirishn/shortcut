@@ -5,16 +5,19 @@
 class Neuron
     
     attr_reader :id
-    attr_accessor :input_id, :spike_counter
+    attr_accessor :input_id, :spike_counter, :name
 
-    def initialize
+    def initialize(name=-1)
         $neurons ||= []
         @@neuron_block_count ||= -1        
         @@neuron_block_count += 1
         @id = ["neuron", @@neuron_block_count]
-        @input_id = ["dummy", 0]
+        #@input_id = ["dummy", 0]
+        @input_id = []
         @spike_counter = SpikeCounter.new
-        @spike_counter.connect_from(self)     
+        @spike_counter.connect_from(self) 
+        @name = @id.join if name == -1
+        @name = name unless name == -1
         $neurons += [self]       
     end
 
@@ -24,10 +27,13 @@ class Neuron
     end
 
     def connect_from(source)
-        if source.id[0] == "neuron"
-            @input_id = Synapse.new(source.id, @id).id 
-        elsif source.id[0] == "triggered_input"  
-            @input_id = source.id
+        (block_type,index) = source.id
+        if block_type == "neuron"
+            @input_id += [Synapse.new(source.id, @id).id] 
+        elsif ["triggered_input", "static_input"].include? block_type 
+            @input_id += [source.id]
+        elsif block_type == "spindle"
+            @input_id += [source.id]
         else
             raise "cannot connect #{source} to #{self}"
         end
@@ -47,10 +53,15 @@ class Neuron
     end
 
     def put_instance_definition
-        (block_type, index) = @input_id
-        i_in = "each_I_#{@input_id.join}" if block_type == "synapse"
-        i_in = @input_id.join if block_type == "triggered_input"
-
+        i_in = "  "
+        @input_id.each do |id|
+            (block_type,index) = id
+            i_in += id.join if ["triggered_input", "static_input"].include? block_type
+            i_in += "each_I_#{id.join}" if block_type == "synapse"
+            i_in += "#{@name}_#{id.join}" if block_type == "spindle"
+            i_in += " + "
+        end
+        i_in += "\b\b"
         instance = %{
 
         // Neuron #{@id.join} Instance Definition
