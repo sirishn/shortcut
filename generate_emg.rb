@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 
-# easily generate verilog to connect neurons and synapses
+# easily generate verilog to connect neurons and synapses to obtain pseudo-emg
 # Sirish Nandyala
 # hi@siri.sh
 

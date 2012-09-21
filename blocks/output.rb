@@ -22,9 +22,12 @@ class Output
     def connect_from(source)
         (block_type,index) = source.id
         if ["neuron"].include? block_type
-            @input_id += [source.input_id] if source.input_id[0] == "synapse" unless @input_id.include? source.input_id
             @input_id += [source.id] unless @input_id.include? source.id
-            @input_id += [source.spike_counter.id] unless @input_id.include? source.spike_counter.id        
+            @input_id += [source.spike_counter.id] unless @input_id.include? source.spike_counter.id
+            source.input_id.each do |id|
+              (inner_block_type, inner_index) = id
+              @input_id += [id] if inner_block_type == "synapse" unless @input_id.include? id
+            end
         elsif ["spindle", "waveform", "triggered_input", "emg"].include? block_type
            @input_id += [source.id] unless @input_id.include? source.id
         else
@@ -33,16 +36,18 @@ class Output
     end
     
     def count_wires
-        @wire_count = 0
-        @input_id.each do |block_type, index|
-           @wire_count += 4 if block_type == "neuron"
-           @wire_count += 2 if block_type == "synapse"
-           @wire_count += 2 if block_type == "spike_counter"
-           @wire_count += 3 if block_type == "waveform"
-           @wire_count += 2 if block_type == "triggered_input"
-           @wire_count += 4 if block_type == "spindle"
-           @wire_count += 2 if block_type == "emg"    
+      @wire_count = 0
+      @input_id.each do |block_type, index|
+
+        if ["neuron", "spindle"].include? block_type
+          @wire_count += 4
+        elsif ["synapse", "spike_counter", "triggered_input", "emg"].include? block_type
+          @wire_count += 2
+        elsif ["waveform"].include? block_type
+          @wire_count += 3
         end
+
+      end
     end
     
     def put_wire_definitions

@@ -61,7 +61,7 @@ class Neuron
             i_in += "#{@name}_#{id.join}" if block_type == "spindle"
             i_in += " + "
         end
-        i_in += "\b\b"
+        i_in = i_in[0..-3] # remove extra + 
         instance = %{
 
         // Neuron #{@id.join} Instance Definition
