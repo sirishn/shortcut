@@ -63,6 +63,9 @@ class Spindle
         // Spindle #{@id.join} Wire Definitions
         wire [31:0] Ia_#{@id.join};    // Ia afferent (pps)
         wire [31:0] II_#{@id.join};    // II afferent (pps)
+        
+        wire [31:0] int_Ia_#{@id.join}; // Ia afferent integer format
+        wire [31:0] fixed_Ia_#{@id.join}; // Ia afferent fixed point format
         }       
         puts wires
     end
@@ -84,6 +87,14 @@ class Spindle
             .BDAMP_2(#{@BDAMP_2_id.join}),           // Damping coefficient for bag2 fiber
             .BDAMP_chain(#{@BDAMP_chain_id.join})    // Damping coefficient for chain fiber
         );
+        
+        // Ia Afferent datatype conversion (floating point -> integer -> fixed point)
+        floor   ia_#{@id.join}_float_to_int(
+            .in(Ia_#{@id.join}),
+            .out(int_Ia_#{@id.join})
+        );
+        
+        assign fixed_Ia_#{@id.join} = int_Ia_#{@id.join} <<< 6;
         }
         puts instance
     end
