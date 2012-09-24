@@ -21,7 +21,7 @@ ia_afferent = Neuron.new "Ia"
 waveform.connect_to spindle
 
 motor_command.connect_to motoneuron
-motoneuron.connect_to muscle
+#motoneuron.connect_to muscle
 
 spindle.connect_to ia_afferent
 ia_afferent.connect_to motoneuron

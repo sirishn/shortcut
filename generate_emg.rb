@@ -16,7 +16,7 @@ def generate_network
     i_in.connect_to motoneurons
 
     ia_afferent = Neuron.new
-    ia_afferent.connect_from motoneurons
+    ia_afferent.connect_from motoneurons # NOT TRUE, connects from spindle
     
     ia_afferent.connect_to motoneurons
     

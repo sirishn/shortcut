@@ -120,7 +120,7 @@ class Output
     
     def add_pipe_in
         return %{
-        okBTPipeIn ep80 (   .ok1(ok1) .ok2(ok2x[#{@wire_out_index+=1}*17 +: 17]), .ep_addr(8'h80), .ep_write(pipe_in_write),
+        okBTPipeIn ep80 (   .ok1(ok1), .ok2(ok2x[#{@wire_out_index+=1}*17 +: 17]), .ep_addr(8'h80), .ep_write(pipe_in_write),
                             .ep_blockstrobe(), ep_dataout(pipe_in_data), ep_ready(1'b1));
         }
     end
