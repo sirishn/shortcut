@@ -1,3 +1,4 @@
+# READY for some Raking
 # easily generate verilog of neuromuscular circuitry using simple ruby commands
 # Sirish Nandyala
 # hi@siri.sh
