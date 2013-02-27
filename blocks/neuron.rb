@@ -28,7 +28,8 @@ class Neuron
 
     def connect_from(source)
         (block_type,index) = source.id
-        if block_type == "neuron"
+        #if block_type == "neuron"
+        if ["neuron", "fpga_rack"].include? block_type
             @input_id += [Synapse.new(source.id, @id).id] 
         elsif ["triggered_input", "static_input"].include? block_type 
             @input_id += [source.id]

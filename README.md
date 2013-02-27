@@ -3,7 +3,7 @@ shortcut
 
 generate verilog code for neuromuscular circuitry using simple ruby commands
 
-Sirish Nandyala
+Sirish Nandyala  
 <hi@siri.sh>
 
 

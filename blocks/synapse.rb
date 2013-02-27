@@ -20,6 +20,11 @@ class Synapse
         
         connect_plasticity
         
+        (block_type, id) = @presynaptic_id
+        @spike_in = "each_spike_#{@presynaptic_id.join}" if block_type == "neuron"
+        @spike_in = "spikein#{$fpga_racks[0].next_open_output}" if block_type == "fpga_rack"
+        
+        
         $synapses += [self]              
     end
 
@@ -56,12 +61,14 @@ class Synapse
     end
     
     def put_instance_definition
+
+        
         instance = %{
         // Synapse #{@id.join} Instance Definition
         synapse #{@id.join}(
             .clk(neuron_clk),                           // neuron clock (128 cycles per 1ms simulation time)
             .reset(reset_global),                       // reset synaptic weights
-            .spike_in(each_spike_#{@presynaptic_id.join}),             // spike from presynaptic neuron
+            .spike_in(#{@spike_in}),             // spike from presynaptic neuron
             .postsynaptic_spike_in(each_spike_#{@postsynaptic_id.join}),   //spike from postsynaptic neuron
             .I_out(I_#{@id.join}),                           // sample of synaptic current out
             .each_I(each_I_#{@id.join}),                      // raw synaptic currents
