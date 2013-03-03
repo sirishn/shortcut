@@ -44,7 +44,7 @@ end
 
 
 def generate_opalkelly_header(modulename)
-
+  
     header = %{
 `timescale 1ns / 1ps
 
@@ -63,7 +63,39 @@ def generate_opalkelly_header(modulename)
 	    input  wire        clk1,
 	    input  wire        clk2,
 	
-	    output wire [7:0]  led
+	    output wire [7:0]  led,
+	    
+	    // Neuron array inputs
+          input wire spikein1,  
+          input wire spikein2,
+          input wire spikein3,
+          input wire spikein4,
+          input wire spikein5,
+          input wire spikein6,
+          input wire spikein7,
+          input wire spikein8,
+          input wire spikein9,
+          input wire spikein10,
+          input wire spikein11,
+          input wire spikein12,
+          input wire spikein13,
+          input wire spikein14,
+      
+          // Neuron array outputs
+          output wire spikeout1, 
+          output wire spikeout2,
+          output wire spikeout3,
+          output wire spikeout4,
+          output wire spikeout5,
+          output wire spikeout6,
+          output wire spikeout7,
+          output wire spikeout8,
+          output wire spikeout9,
+          output wire spikeout10,
+          output wire spikeout11,
+          output wire spikeout12,
+          output wire spikeout13,
+          output wire spikeout14
        );
        
         parameter NN = 8;
