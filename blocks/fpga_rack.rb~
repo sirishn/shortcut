@@ -20,6 +20,7 @@ class FPGARack
   end
   
   def connect_to(destination)
+    @next_open_input = 1 if @next_open_input == 0
     destination.connect_from self
     @next_open_input += 1
   end

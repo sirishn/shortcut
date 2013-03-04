@@ -8,7 +8,7 @@ require './shortcut'
 
 $modulename = 'slr'
 
-motor_command = TriggeredInput.new
+motor_command = TriggeredInput.new 10, "I_in", [50,6]
 
 #muscle = Muscle.new
 spindle = Spindle.new
