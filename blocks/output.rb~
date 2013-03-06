@@ -42,9 +42,7 @@ class Output
 
         if ["neuron", "spindle"].include? block_type
           @wire_count += 4
-        elsif ["synapse", "spike_counter", "triggered_input", "emg"].include? block_type
-          @wire_count += 2
-        elsif ["waveform"].include? block_type
+        elsif ["synapse", "spike_counter", "triggered_input", "emg", "waveform", "muscle"].include? block_type
           @wire_count += 2
         end
 
@@ -85,7 +83,7 @@ class Output
         okWireIn    wi01    (.ok1(ok1), .ep_addr(8'h01),    .ep_dataout(ep01wire)   );
         okWireIn    wi02    (.ok1(ok1), .ep_addr(8'h02),    .ep_dataout(ep02wire)   );
         }
-        if $
+        instance += add_pipe_in unless $waveforms.empty?
         @input_id.each do |input_id|
             (block_type,index) = input_id
 

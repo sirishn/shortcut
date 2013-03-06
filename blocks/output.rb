@@ -42,9 +42,7 @@ class Output
 
         if ["neuron", "spindle"].include? block_type
           @wire_count += 4
-        elsif ["synapse", "spike_counter", "triggered_input", "emg"].include? block_type
-          @wire_count += 2
-        elsif ["waveform"].include? block_type
+        elsif ["synapse", "spike_counter", "triggered_input", "emg", "waveform", "muscle"].include? block_type
           @wire_count += 2
         end
 
@@ -105,6 +103,8 @@ class Output
                 instance += add_wire_outs "", input_id
             elsif block_type == "emg"
                 instance += add_wire_outs "", input_id
+            elsif block_type == "muscle"
+                instance += add_wire_outs "total_force_out", input_id
             end
         end
         puts instance
