@@ -85,7 +85,7 @@ class Output
         okWireIn    wi01    (.ok1(ok1), .ep_addr(8'h01),    .ep_dataout(ep01wire)   );
         okWireIn    wi02    (.ok1(ok1), .ep_addr(8'h02),    .ep_dataout(ep02wire)   );
         }
-        instance += add_pipe_in unless $waveforms.empty?
+        if $
         @input_id.each do |input_id|
             (block_type,index) = input_id
 

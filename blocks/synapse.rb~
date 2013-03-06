@@ -22,7 +22,7 @@ class Synapse
         
         (block_type, id) = @presynaptic_id
         @spike_in = "each_spike_#{@presynaptic_id.join}" if block_type == "neuron"
-        @spike_in = "spikein#{$fpga_racks[0].next_open_input}" if block_type == "fpga_rack"
+        @spike_in = "spikein#{$fpga_racks[0].next_open_output}" if block_type == "fpga_rack"
         
         
         $synapses += [self]              
