@@ -19,7 +19,7 @@ class Muscle
     end
     
     def connect_to(destination)
-        destination_connect_from self
+        destination.connect_from self
     end
     
     def connect_from(source)

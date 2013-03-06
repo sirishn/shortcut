@@ -53,7 +53,7 @@ class Muscle
         // Muscle #{@id.join} Wire Definitions
         shadmehr_muscle #{@id.join}(
             .spike_cnt(spike_count_neuron#{index}),
-            .pos(32'h3f80_0000),
+            .pos(#{@lce_id.join}),
             .vel(32'd0),
             .clk(sim_clk),
             .reset(reset_global),
