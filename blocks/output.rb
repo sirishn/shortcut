@@ -28,7 +28,7 @@ class Output
               (inner_block_type, inner_index) = id
               @input_id += [id] if inner_block_type == "synapse" unless @input_id.include? id
             end
-        elsif ["spindle", "waveform", "triggered_input", "emg"].include? block_type
+        elsif ["spindle", "waveform", "triggered_input", "emg", "muscle"].include? block_type
            @input_id += [source.id] unless @input_id.include? source.id
         else
             raise "cannot connect #{source} to #{self}"

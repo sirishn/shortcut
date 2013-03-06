@@ -103,6 +103,8 @@ class Output
                 instance += add_wire_outs "", input_id
             elsif block_type == "emg"
                 instance += add_wire_outs "", input_id
+            elsif block_type == "muscle"
+                instance += add_wire_outs "total_force_out", input_id
             end
         end
         puts instance
