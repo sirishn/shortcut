@@ -27,7 +27,8 @@ class FPGARack
   def connect_from(source)
     @next_open_output = 1 if @next_open_output == 0
     (block_type, index) = source.id
-    if block_type == "neuron"
+    #if block_type == "neuron"
+    if ["neuron", "uart"].include? block_type
       @input_id += [source.id]
     else
       raise "cannot connect #{source} to #{self}"
@@ -50,8 +51,10 @@ class FPGARack
       (block_type, index) = id
       if block_type == "neuron"
         puts "    assign spikeout#{@next_open_output} = each_spike_#{id.join};"
-        @next_open_output += 1
+      elsif block_type == "uart"
+        puts "    assign spikeout#{@next_open_output} = TxD_#{id.join};"
       end
+      @next_open_output += 1
     end
     
     while @next_open_output <= 14 do

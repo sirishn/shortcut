@@ -37,7 +37,8 @@ class Spindle
             @BDAMP_2_id = source.id if source.name == "BDAMP_2"
             @BDAMP_chain_id = source.id if source.name == "BDAMP_chain"
             @lce_id = source.id if source.name == "lce"
-        elsif block_type == "waveform"
+        #elsif block_type == "waveform"
+        elsif ["waveform", "uart"].include? block_type
             @lce_id = source.id 
         else
             raise "cannot connect #{source} to #{self}"
@@ -72,12 +73,17 @@ class Spindle
     end
 
     def put_instance_definition
+        
+        (block_type, index) = @lce_id
+        lce = @lce_id.join
+        lce = "RxData_#{@lce_id.join}" if block_type == "uart"
+        
         instance = %{
         // Spindle #{@id.join} Instance Definition
         spindle #{@id.join} (
             .gamma_dyn(#{@gamma_dynamic_id.join}),   // spindle dynamic gamma input (pps)
             .gamma_sta(#{@gamma_static_id.join}),    // spindle static gamma input (pps)
-            .lce(#{@lce_id.join}),                   // length of contractile element (muscle length)
+            .lce(#{lce}),                   // length of contractile element (muscle length)
             .clk(spindle_clk),                  // spindle clock (3 cycles per 1ms simulation time) 
             .reset(reset_global),               // reset the spindle
             .out0(),
