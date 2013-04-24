@@ -12,13 +12,13 @@ def generate_network
 
     i_in = TriggeredInput.new 10, "I_in", [50,6]
     
-    motoneurons = Neuron.new
+    motoneurons = Neuron.new "alpha", "regular spiking"
     i_in.connect_to motoneurons
 
-    ia_afferent = Neuron.new
-    ia_afferent.connect_from motoneurons
+    ia_afferent = Neuron.new "Ia", "fast spiking"
+    ia_afferent.connect_from motoneurons, 3000
     
-    ia_afferent.connect_to motoneurons
+    ia_afferent.connect_to motoneurons, 2000
     
     output = Output.new
     motoneurons.connect_to output

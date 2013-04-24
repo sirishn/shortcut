@@ -1,4 +1,4 @@
-# generate verilog for neuron modules
+ # generate verilog for neuron modules
 # Sirish Nandyala
 # hi@siri.sh
 
@@ -7,7 +7,7 @@ class Neuron
     attr_reader :id
     attr_accessor :input_id, :spike_counter, :name
 
-    def initialize(name=-1)
+    def initialize(name=-1, type=-1)
         $neurons ||= []
         @@neuron_block_count ||= -1        
         @@neuron_block_count += 1
@@ -18,19 +18,22 @@ class Neuron
         @spike_counter.connect_from(self) 
         @name = @id.join if name == -1
         @name = name unless name == -1
+        @type = type unless type == -1
         $neurons += [self]       
     end
 
-    def connect_to(destination)
+    def connect_to(destination, strength=-1)
         #destination.input_id = Synapse.new( @id, destination.id).id if destination.id[0] == "neuron"
-        destination.connect_from self  
+        (block_type,index) = destination.id
+        destination.connect_from self unless ["neuron", "fpga_rack"].include? block_type
+        destination.connect_from self, strength if ["neuron", "fpga_rack"].include? block_type
     end
 
-    def connect_from(source)
+    def connect_from(source, synaptic_strength=-1)
         (block_type,index) = source.id
         #if block_type == "neuron"
         if ["neuron", "fpga_rack"].include? block_type
-            @input_id += [Synapse.new(source.id, @id).id] 
+            @input_id += [Synapse.new(source.id, @id, synaptic_strength).id] 
         elsif ["triggered_input", "static_input"].include? block_type 
             @input_id += [source.id]
         elsif block_type == "spindle"
@@ -43,7 +46,7 @@ class Neuron
     def put_wire_definitions
         
         wires = %{
-        // Neuron #{@id.join} Wire Definitions
+        // Neuron #{@id.join} Wire Definitions (#{@name})
         wire [31:0] v_#{@id.join};   // membrane potential
         wire spike_#{@id.join};      // spike sample for visualization only
         wire each_spike_#{@id.join}; // raw spike signals
@@ -63,10 +66,19 @@ class Neuron
             i_in += " + "
         end
         i_in = i_in[0..-3] # remove extra + 
+        
+        neuron_type = "izneuron"
+        neuron_type += "" if @type == "regular spiking"
+        neuron_type += "_fs" if @type == "fast spiking"
+        neuron_type += "_ib" if @type == "intrinsically bursting"
+        neuron_type += "_ch" if @type == "chattering"
+        neuron_type += "_lts" if @type == "low-threshold spiking"
+        neuron_type += "_rz" if @type == "resonator"
+        
         instance = %{
 
-        // Neuron #{@id.join} Instance Definition
-        izneuron #{@id.join}(
+        // Neuron #{@id.join} Instance Definition (#{@name})
+        #{neuron_type} #{@id.join}(
             .clk(neuron_clk),               // neuron clock (128 cycles per 1ms simulation time)
             .reset(reset_global),           // reset to initial conditions
             .I_in(#{i_in}),          // input current from synapse
