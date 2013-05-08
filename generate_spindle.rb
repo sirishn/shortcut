@@ -15,7 +15,7 @@ spindle.connect_parameters  # create and connect the default parameter inputs
 #waveform = Waveform.new
 #waveform.connect_to spindle
 
-length = TriggeredInput.new 1.0, "lce"
+length = TriggeredInput.new 1.0, "lce", [50,3]
 length.connect_to spindle
 
 

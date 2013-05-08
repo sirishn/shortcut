@@ -19,13 +19,18 @@ class Spindle
         @BDAMP_2_id = ["dummy_triggered_input", 999]
         @BDAMP_chain_id = ["dummy_triggered_input", 999]
         
+        @Ia_gain_id = ["dummy_triggered_input", 999]
+        @II_gain_id = ["dummy_triggered_input", 999]
+        
         connect_parameters
         
         $spindles += [self]    
     end
 
-    def connect_to(destination)
-        destination.connect_from self
+    def connect_to(destination, type=-1)
+        (block_type,index) = destination.id
+        destination.connect_from self unless block_type == "neuron"
+        destination.connect_from(self,type) if block_type == "neuron"
     end
 
     def connect_from(source)
@@ -37,6 +42,8 @@ class Spindle
             @BDAMP_2_id = source.id if source.name == "BDAMP_2"
             @BDAMP_chain_id = source.id if source.name == "BDAMP_chain"
             @lce_id = source.id if source.name == "lce"
+            @Ia_gain_id = source.id if source.name == "Ia_gain"
+            @II_gain_id = source.id if source.name == "II_gain"
         #elsif block_type == "waveform"
         elsif ["waveform", "uart"].include? block_type
             @lce_id = source.id 
@@ -53,11 +60,16 @@ class Spindle
       @@bdamp_2 ||= TriggeredInput.new 0.0362, "BDAMP_2", [50,14]           #"32'h3D14_4674"
       @@bdamp_chain ||= TriggeredInput.new 0.0132, "BDAMP_chain", [50,13]   #"32'h3C58_44D0"
       
+      @@Ia_gain ||= TriggeredInput.new -1, "Ia_gain", [50,9]
+      @@II_gain ||= TriggeredInput.new -1, "II_gain", [50,8]
+      
       @@gamma_dynamic.connect_to self
       @@gamma_static.connect_to self
       @@bdamp_1.connect_to self
       @@bdamp_2.connect_to self
       @@bdamp_chain.connect_to self
+      @@Ia_gain.connect_to self
+      @@II_gain.connect_to self
     end
     
     def put_wire_definitions
@@ -68,6 +80,9 @@ class Spindle
         
         wire [31:0] int_Ia_#{@id.join}; // Ia afferent integer format
         wire [31:0] fixed_Ia_#{@id.join}; // Ia afferent fixed point format
+        
+        wire [31:0] int_II_#{@id.join}; // II afferent integer format
+        wire [31:0] fixed_II_#{@id.join}; // II afferent fixed point format
         }       
         puts wires
     end
@@ -95,13 +110,22 @@ class Spindle
             .BDAMP_chain(#{@BDAMP_chain_id.join})    // Damping coefficient for chain fiber
         );
         
-        // Ia Afferent datatype conversion (floating point -> integer -> fixed point)
+        // Ia Afferent datatype conversion (floating point -> integer -> scaled fixed point)
         floor   ia_#{@id.join}_float_to_int(
             .in(Ia_#{@id.join}),
             .out(int_Ia_#{@id.join})
         );
         
-        assign fixed_Ia_#{@id.join} = int_Ia_#{@id.join} <<< 6;
+        assign fixed_Ia_#{@id.join} = int_Ia_#{@id.join} * #{@Ia_gain_id.join};
+        
+        // II Afferent datatype conversion (floating point -> integer -> scaled fixed point)
+        floor   ii_#{@id.join}_float_to_int(
+            .in(II_#{@id.join}),
+            .out(int_II_#{@id.join})
+        );
+        
+        assign fixed_II_#{@id.join} = int_II_#{@id.join} * #{@II_gain_id.join};
+        
         }
         puts instance
     end

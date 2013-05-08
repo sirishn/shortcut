@@ -30,9 +30,10 @@ class TriggeredInput
     def format_data_type(value)
         (block_type, index) = @target_id
         if ["neuron", "synapse"].include? block_type
-          return format_fixed(value)
+          return format_fixed(value) 
         elsif ["spindle", "muscle"].include? block_type
-          return format_float(value) 
+          return format_float(value) unless ["Ia_gain", "II_gain"].include? @name
+          return format_int32(value) if ["Ia_gain", "II_gain"].include? @name 
         elsif ["clk_gen"].include? block_type
           return format_int32(value)
         end

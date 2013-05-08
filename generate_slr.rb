@@ -14,25 +14,28 @@ motor_command = TriggeredInput.new 10, "I_in", [50,6]
 spindle = Spindle.new
 waveform = Waveform.new
 
-motoneurons = Neuron.new
-ia_afferent = Neuron.new "Ia"
+#motoneurons = Neuron.new
+ia_afferent = Neuron.new "Ia", "fast spiking"
+ii_afferent = Neuron.new "II", "fast spiking"
 
 #waveform.connect_to muscle
 waveform.connect_to spindle
 
-motor_command.connect_to motoneurons
+#motor_command.connect_to motoneurons
 #motoneuron.connect_to muscle
 
-spindle.connect_to ia_afferent
-ia_afferent.connect_to motoneurons
+spindle.connect_to ia_afferent, "Ia"
+spindle.connect_to ii_afferent, "II"
+#ia_afferent.connect_to motoneurons
 
-emg = EMG.new
-motoneurons.connect_to emg
+#emg = EMG.new
+#motoneurons.connect_to emg
     
 output = Output.new
-motoneurons.connect_to output
+#motoneurons.connect_to output
 ia_afferent.connect_to output
-emg.connect_to output
+ii_afferent.connect_to output
+#emg.connect_to output
 spindle.connect_to output
 waveform.connect_to output
 

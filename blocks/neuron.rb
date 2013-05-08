@@ -21,6 +21,8 @@ class Neuron
         @type = "regular spiking" if type == -1
         @type = type unless type == -1
         
+        @afferent_type = "Ia"
+        
         $neurons += [self]       
     end
 
@@ -40,6 +42,7 @@ class Neuron
             @input_id += [source.id]
         elsif block_type == "spindle"
             @input_id += [source.id]
+            @afferent_type = synaptic_strength unless synaptic_strength == -1
         else
             raise "cannot connect #{source} to #{self}"
         end
@@ -69,7 +72,7 @@ class Neuron
             (block_type,index) = id
             i_in += id.join if ["triggered_input", "static_input"].include? block_type
             i_in += "each_I_#{id.join}" if block_type == "synapse"
-            i_in += "fixed_#{@name}_#{id.join}" if block_type == "spindle"
+            i_in += "fixed_#{@afferent_type}_#{id.join}" if block_type == "spindle"
             i_in += " + "
         end
         i_in = i_in[0..-3] # remove extra + 
