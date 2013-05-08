@@ -18,7 +18,9 @@ class Neuron
         @spike_counter.connect_from(self) 
         @name = @id.join if name == -1
         @name = name unless name == -1
+        @type = "regular spiking" if type == -1
         @type = type unless type == -1
+        
         $neurons += [self]       
     end
 
@@ -50,7 +52,12 @@ class Neuron
         wire [31:0] v_#{@id.join};   // membrane potential
         wire spike_#{@id.join};      // spike sample for visualization only
         wire each_spike_#{@id.join}; // raw spike signals
-        wire [127:0] population_#{@id.join}; // spike raster for entire population        
+        wire [127:0] population_#{@id.join}; // spike raster for entire population  
+        
+        wire [31:0] a_#{@id.join};  // membrane recovery decay rate
+        wire [31:0] b_#{@id.join};  // membrane recovery sensitivity
+        wire [31:0] c_#{@id.join};  // membrane potential reset value
+        wire [31:0] d_#{@id.join};  // membrane recovery reset value    
         }
         puts wires
     
@@ -67,20 +74,27 @@ class Neuron
         end
         i_in = i_in[0..-3] # remove extra + 
         
-        neuron_type = "izneuron"
-        neuron_type += "" if @type == "regular spiking"
-        neuron_type += "_fs" if @type == "fast spiking"
-        neuron_type += "_ib" if @type == "intrinsically bursting"
-        neuron_type += "_ch" if @type == "chattering"
-        neuron_type += "_lts" if @type == "low-threshold spiking"
-        neuron_type += "_rz" if @type == "resonator"
+
+        (a,b,c,d) = ["32'd82", "32'd205", "-32'd65560", "32'd2048"] if @type == "regular spiking"
+        (a,b,c,d) = ["32'd12", "32'd205", "-32'd65560", "32'd2048"] if @type == "fast spiking"        
         
         instance = %{
 
-        // Neuron #{@id.join} Instance Definition (#{@name})
-        #{neuron_type} #{@id.join}(
+        // Neuron #{@id.join} Instance Definition (#{@name} - #{@type})
+        assign a_#{@id.join} = #{a};
+        assign b_#{@id.join} = #{b};
+        assign c_#{@id.join} = #{c};
+        assign d_#{@id.join} = #{d};
+        
+        izneuron_abcd #{@id.join}(
             .clk(neuron_clk),               // neuron clock (128 cycles per 1ms simulation time)
             .reset(reset_global),           // reset to initial conditions
+            
+            .a(a_#{@id.join}),
+            .b(b_#{@id.join}),
+            .c(c_#{@id.join}),
+            .d(d_#{@id.join}),
+            
             .I_in(#{i_in}),          // input current from synapse
             .v_out(v_#{@id.join}),               // membrane potential
             .spike(spike_#{@id.join}),           // spike sample
