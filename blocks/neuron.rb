@@ -18,7 +18,7 @@ class Neuron
         @spike_counter.connect_from(self) 
         @name = @id.join if name == -1
         @name = name unless name == -1
-        @type = "regular spiking" if type == -1
+        @type = "regular" if type == -1
         @type = type unless type == -1
         
         @afferent_type = "Ia"
@@ -78,8 +78,8 @@ class Neuron
         i_in = i_in[0..-3] # remove extra + 
         
 
-        (a,b,c,d) = ["32'd82", "32'd205", "-32'd65560", "32'd2048"] if @type == "regular spiking"
-        (a,b,c,d) = ["32'd12", "32'd205", "-32'd65560", "32'd2048"] if @type == "fast spiking"        
+        (a,b,c,d) = ["32'd82", "32'd205", "-32'd65560", "32'd2048"] if @type == "regular"
+        (a,b,c,d) = ["32'd12", "32'd205", "-32'd65560", "32'd2048"] if @type == "fast"        
         
         instance = %{
 
